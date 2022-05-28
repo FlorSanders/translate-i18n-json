@@ -1,27 +1,24 @@
-import fs from "fs";
-import path from "path";
-import { generateTranslations } from "./translate.js";
+import translate from "./translate.js";
 
-const sourceLanguage = "en";
-const sourceFile = "./en.json";
-const targetLanguages = ["nl", "fr", "es", "de"];
-const targetLocation = "./translations/";
+// Source translation file
+const sourceTranslation = {
+  file: "./translations/en.json", // Source file path
+  language: "en", // Source file language
+};
 
-const sourceTranslation = JSON.parse(fs.readFileSync(sourceFile));
+// Target translation files
+const targetTranslations = [
+  {
+    file: "./translations/nl.json", // Target file path
+    language: "nl", // Target file language
+    oldFile: "./translations_old/nl.json", // Old target file (overwrites auto-generated translations)
+  },
+  {
+    file: "./translations/fr.json", // Target file path
+    language: "fr", // Target file language
+    oldFile: "./translations_old/fr.json", // Old target file (overwrites auto-generated translations)
+  },
+];
 
-async function translate() {
-  console.log("Translating...");
-  const translations = await generateTranslations(
-    sourceTranslation,
-    sourceLanguage,
-    targetLanguages
-  );
-  for (const [language, translation] of Object.entries(translations)) {
-    const targetFile = path.join(targetLocation, `${language}.json`);
-    fs.mkdir(targetLocation, () => {
-      fs.writeFileSync(targetFile, JSON.stringify(translation));
-    });
-  }
-}
-
-translate();
+// Generate translations
+translate(sourceTranslation, targetTranslations);
